@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,10 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="PizzaOrderTable")
+@Table(name="Pizza_Order_Table")
 public class PizzaOrder
 {
 	 @Id
@@ -32,7 +34,7 @@ public class PizzaOrder
 			 @JoinColumn(name = "pizzaId") })
 	 Set<Pizza> pizzaSet = new HashSet<Pizza>();
 	 
-	 @ManyToOne
+	 @OneToOne(mappedBy="pizzaOrder",fetch=FetchType.LAZY,cascade=CascadeType.ALL) 
 	 private Order order;
 	
 	 @ManyToMany
@@ -157,3 +159,4 @@ public class PizzaOrder
 	 
 	 
 }
+
