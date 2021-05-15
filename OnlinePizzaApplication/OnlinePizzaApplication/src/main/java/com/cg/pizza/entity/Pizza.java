@@ -2,6 +2,7 @@ package com.cg.pizza.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,39 +12,52 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="pizzatable")
+@Table(name="pizza_table")
 public class Pizza {
 	@Id
 	@GeneratedValue
-	private int pizzaId;
-	@GeneratedValue
+	@Column(name ="pizza_id")
+	private int pizzaId;	
+	@Column(name ="pizza_type")
 	private String pizzaType;
-	@GeneratedValue
-	private String pizzaName;
-	@GeneratedValue
+	@Column(name ="pizza_name")
+	private String pizzaName;	
+	@Column(name ="pizza_description")
 	private String pizzaDescription;
-	@GeneratedValue
-	private double pizzaCost;
-	@GeneratedValue
+	@Column(name ="pizza_cost")
+	private double pizzaCost;	
+	@Column(name ="pizza_caftercoupon")
 	private double pizzaCostAfterCoupan;
 	
-	
-	@Override
-	public String toString() {
-		return "Pizza [pizzaId=" + pizzaId + ", pizzaType=" + pizzaType + ", pizzaName=" + pizzaName
-				+ ", pizzaDescription=" + pizzaDescription + ", pizzaCost=" + pizzaCost + ", pizzaCostAfterCoupan="
-				+ pizzaCostAfterCoupan + ", pizzaSet=" + pizzaSet + "]";
+	public Pizza() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
+	
+	
+	
+	public Pizza(int pizzaId, String pizzaType, String pizzaName, String pizzaDescription, double pizzaCost,
+			double pizzaCostAfterCoupan, Set<PizzaOrder> pizzaSet) {
+		super();
+		this.pizzaId = pizzaId;
+		this.pizzaType = pizzaType;
+		this.pizzaName = pizzaName;
+		this.pizzaDescription = pizzaDescription;
+		this.pizzaCost = pizzaCost;
+		this.pizzaCostAfterCoupan = pizzaCostAfterCoupan;
+		this.pizzaOrderSet = pizzaSet;
+	}
+	
 	@ManyToMany
 	@JoinTable(name = "Pizza_Order", joinColumns = { @JoinColumn(name = "pizzaId") }, inverseJoinColumns = {
 			 @JoinColumn(name = "bookingOrderId") })
 	//private PizzaOrder pizzaorder;
-	Set<PizzaOrder> pizzaSet = new HashSet<PizzaOrder>();
+	Set<PizzaOrder> pizzaOrderSet = new HashSet<PizzaOrder>();
 	public Set<PizzaOrder> getPizzaSet() {
-		return pizzaSet;
+		return pizzaOrderSet;
 	}
 	public void setPizzaSet(Set<PizzaOrder> pizzaSet) {
-		this.pizzaSet = pizzaSet;
+		this.pizzaOrderSet = pizzaSet;
 	}
 	public int getPizzaId() {
 		return pizzaId;
@@ -81,5 +95,10 @@ public class Pizza {
 	public void setPizzaCostAfterCoupan(double pizzaCostAfterCoupan) {
 		this.pizzaCostAfterCoupan = pizzaCostAfterCoupan;
 	}
-
+	@Override
+	public String toString() {
+		return "Pizza [pizzaId=" + pizzaId + ", pizzaType=" + pizzaType + ", pizzaName=" + pizzaName
+				+ ", pizzaDescription=" + pizzaDescription + ", pizzaCost=" + pizzaCost + ", pizzaCostAfterCoupan="
+				+ pizzaCostAfterCoupan + ", pizzaSet=" + pizzaOrderSet + "]";
+	}
 }
