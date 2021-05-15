@@ -3,6 +3,7 @@ package com.cg.pizza.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,16 +18,20 @@ public class Coupan {
       @Id
       @GeneratedValue
       private int coupanId;
+      @Column(name=" coupanName")
       private String coupanName;
+      @Column(name=" coupanDescription")
       private String coupanDescription;
+      @Column(name=" coupanPizzaId")
       private int coupanPizzaId;
       
       @ManyToMany
       @JoinTable(name = "Coupan_PizzaOrder", joinColumns = { @JoinColumn(name = "coupanId") }, inverseJoinColumns = {
   			@JoinColumn(name = "bookingOrderId") })
     // PizzaOrder pizzaorder;
-      Set<PizzaOrder> pizzaSet = new HashSet<PizzaOrder>();
+      Set<PizzaOrder> pizzaOrderSet = new HashSet<PizzaOrder>();
       
+      public Coupan() {}
 //Getter and Setter Methods     
 	public int getCoupanId() {
 		return coupanId;
@@ -38,10 +43,10 @@ public class Coupan {
 		return coupanName;
 	}
 	public Set<PizzaOrder> getPizzaSet() {
-		return pizzaSet;
+		return pizzaOrderSet;
 	}
 	public void setPizzaSet(Set<PizzaOrder> pizzaSet) {
-		this.pizzaSet = pizzaSet;
+		this.pizzaOrderSet = pizzaSet;
 	}
 	public void setCoupanName(String coupanName) {
 		this.coupanName = coupanName;
@@ -61,7 +66,7 @@ public class Coupan {
 	@Override
 	public String toString() {
 		return "Coupan [coupanId=" + coupanId + ", coupanName=" + coupanName + ", coupanDescription="
-				+ coupanDescription + ", coupanPizzaId=" + coupanPizzaId + "]";
+				+ coupanDescription + ", coupanPizzaId=" + coupanPizzaId + ", pizzaOrderSet=" + pizzaOrderSet + "]";
 	}
 	
 	
