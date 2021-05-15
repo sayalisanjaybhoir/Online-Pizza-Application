@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,39 +18,43 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Pizza_Order_Table")
-public class PizzaOrder
-{
-	 @Id
-	 @GeneratedValue
-	 private int bookingOrderId;
-	 private Date orderDate;
-	 private String transactionMode;
-	 private int quantity;
-	 private String size;
-	 private double totalCost;
-	 
-	 @ManyToMany(fetch=FetchType.LAZY)
-	 @JoinTable(name = "Pizza_Order", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
-			 @JoinColumn(name = "pizzaId") })
-	 Set<Pizza> pizzaSet = new HashSet<Pizza>();
-	 
-	 @OneToOne(mappedBy="pizzaOrder",fetch=FetchType.LAZY,cascade=CascadeType.ALL) 
-	 private Order order;
-	
-	 @ManyToMany
-	 @JoinTable(name = "Coupan_PizzaOrder", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
-			 @JoinColumn(name = "coupanId") })
-	 Set<Coupan> coupanSet = new HashSet<Coupan>();
-	
-	 @ManyToMany(fetch=FetchType.LAZY)
-	 @JoinTable(name = "Customer_Pizza_Order", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
-			 @JoinColumn(name = "customerId") })
-	 Set<Customer> customerSet = new HashSet<Customer>();
+@Table(name = "Pizza_Order_Table")
+public class PizzaOrder {
+	@Id
+	@GeneratedValue
+	@Column(name ="booking_id")
+	private int bookingOrderId;
+	@Column(name ="order_date")
+	private Date orderDate;
+	@Column(name ="transc_mode")
+	private String transactionMode;
+	@Column(name ="pizza_quantity")
+	private int quantity;
+	@Column(name ="pizza_size")
+	private String size;
+	@Column(name ="total_pizza_cost")
+	private double totalCost;
 
-	public PizzaOrder() 
-	{
-		
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "Pizza_Order", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
+			@JoinColumn(name = "pizzaId") })
+	Set<Pizza> pizzaSet = new HashSet<Pizza>();
+
+	@OneToOne(mappedBy = "pizzaOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Order order;
+
+	@ManyToMany
+	@JoinTable(name = "Coupan_PizzaOrder", joinColumns = {
+			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "coupanId") })
+	Set<Coupan> coupanSet = new HashSet<Coupan>();
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "Customer_Pizza_Order", joinColumns = {
+			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "customerId") })
+	Set<Customer> customerSet = new HashSet<Customer>();
+
+	public PizzaOrder() {
+
 	}
 
 	public PizzaOrder(int bookingOrderId, Date orderDate, String transactionMode, int quantity, String size,
@@ -154,9 +159,7 @@ public class PizzaOrder
 				+ ", pizzaSet=" + pizzaSet + ", order=" + order + ", coupanSet=" + coupanSet + ", customerSet="
 				+ customerSet + "]";
 	}
-	 
-	 
-	 
-	 
+
 }
+
 
