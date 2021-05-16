@@ -1,42 +1,25 @@
 package com.cg.pizza.entity;
 
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "OrderTable")
+import javax.persistence.Embeddable;
+
+
+
+
+@Embeddable
 public class Order
 {
-	@Id
-	@GeneratedValue
+
 	private int orderId;
 	private String orderType;
 	private String orderDescription;
-	public PizzaOrder getPizzaOrder() {
-		return pizzaOrder;
-	}
-
-
-
-	public void setPizzaOrder(PizzaOrder pizzaOrder) {
-		this.pizzaOrder = pizzaOrder;
-	}
-
-
-
 	private int orderCustomerId;
 	
 
-	@OneToOne(fetch=FetchType.LAZY)
-	private PizzaOrder pizzaOrder;
 	
-	public Order() {
+	public Order() 
+	{
 		super();
 	}
 
@@ -103,7 +86,7 @@ public class Order
 	@Override
 	public String toString() {
 		return "Order [orderId=" + orderId + ", orderType=" + orderType + ", orderDescription=" + orderDescription
-				+ ", orderCustomerId=" + orderCustomerId + ", pizzaOrder=" + pizzaOrder + "]";
+				+ ", orderCustomerId=" + orderCustomerId + "]";
 	}
 	
 	
