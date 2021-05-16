@@ -2,8 +2,6 @@ package com.cg.pizza.entity;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.annotation.Generated;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,88 +15,66 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Customer")
+@Table(name = "Customer")
 public class Customer {
 	@Id
 	@GeneratedValue
 	private int customerId;
-	@Column(name ="customerName")
+	@Column(name = "customerName")
 	private String customerName;
-	@Column(name ="customerMobile")
+	@Column(name = "customerMobile")
 	private Long customerMobile;
-	@Column(name ="customerEmail")
+	@Column(name = "customerEmail")
 	private String customerEmail;
-	@Column(name ="customerAddress")
+	@Column(name = "customerAddress")
 	private String customerAddress;
-	@Column(name ="userName")
+	@Column(name = "userName")
 	private String userName;
-	@Column(name ="password")
+	@Column(name = "password")
 	private String password;
-	
-	@OneToOne(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+	@OneToOne(mappedBy = "customer",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;
-	
-public User getUser() {
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "Customer_Pizza_Order", joinColumns = { @JoinColumn(name = "customerId") }, inverseJoinColumns = {
+			@JoinColumn(name = "bookingOrderId") })
+	// private PizzaOrder pizzaorder;
+	Set<PizzaOrder> pizzaOrderSet = new HashSet<PizzaOrder>();
+
+	public User getUser() {
 		return user;
 	}
-
-
 
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-
-
 	public Set<PizzaOrder> getPizzaOrderSet() {
 		return pizzaOrderSet;
 	}
-
-
 
 	public void setPizzaOrderSet(Set<PizzaOrder> pizzaOrderSet) {
 		this.pizzaOrderSet = pizzaOrderSet;
 	}
 
+	public Customer() {
+	}
 
+	public Customer(int customerId, String customerName, Long customerMobile, String customerEmail,
+			String customerAddress, String userName, String password, User user, Set<PizzaOrder> pizzaOrderSet) {
+		super();
+		this.customerId = customerId;
+		this.customerName = customerName;
+		this.customerMobile = customerMobile;
+		this.customerEmail = customerEmail;
+		this.customerAddress = customerAddress;
+		this.userName = userName;
+		this.password = password;
+		this.user = user;
+		this.pizzaOrderSet = pizzaOrderSet;
+	}
 
-public Customer() {}
-
-
-	
-	
-
-
-
-	public Customer(int customerId, String customerName, Long customerMobile, String customerEmail, String customerAddress,
-		String userName, String password, User user, Set<PizzaOrder> pizzaOrderSet) {
-	super();
-	this.customerId = customerId;
-	this.customerName = customerName;
-	this.customerMobile = customerMobile;
-	this.customerEmail = customerEmail;
-	this.customerAddress = customerAddress;
-	this.userName = userName;
-	this.password = password;
-	this.user = user;
-	this.pizzaOrderSet = pizzaOrderSet;
-}
-
-
-
-
-
-
-
-	@ManyToMany
-	@JoinTable(name = "Customer_Pizza_Order", joinColumns = { @JoinColumn(name = "customerId") }, inverseJoinColumns = {
-			 @JoinColumn(name = "bookingOrderId") })
-	//private PizzaOrder pizzaorder;
-	Set<PizzaOrder> pizzaOrderSet = new HashSet<PizzaOrder>();
-	
-	
-	
-	
 	public int getCustomerId() {
 		return customerId;
 	}
