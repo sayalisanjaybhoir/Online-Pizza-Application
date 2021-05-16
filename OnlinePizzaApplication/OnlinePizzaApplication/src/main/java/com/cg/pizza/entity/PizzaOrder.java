@@ -1,11 +1,13 @@
 package com.cg.pizza.entity;
 
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Locale;
+
 import java.util.Set;
 
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,15 +19,27 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonIgnoreProperties({"hibernateLazyInitilizer","handler"})
 @Entity
 @Table(name = "Pizza_Order_Table")
-public class PizzaOrder {
+
+public class PizzaOrder implements Serializable
+{
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
 	@Column(name ="booking_id")
 	private int bookingOrderId;
 	@Column(name ="order_date")
-	private Locale orderDate;
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
+	//@JsonFormat(pattern = "YYYY-MM-dd HH:mm")
+	
+	private LocalDate orderDate;
 	@Column(name ="transc_mode")
 	private String transactionMode;
 	@Column(name ="pizza_quantity")
@@ -35,7 +49,8 @@ public class PizzaOrder {
 	@Column(name ="total_pizza_cost")
 	private double totalCost;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@JoinTable(name = "Pizza_Order", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
 			@JoinColumn(name = "pizzaId") })
 	Set<Pizza> pizzaSet = new HashSet<Pizza>();
@@ -43,12 +58,14 @@ public class PizzaOrder {
 	@Embedded
 	private Order order;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
 	@JoinTable(name = "Coupan_PizzaOrder", joinColumns = {
 			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "coupanId") })
 	Set<Coupan> coupanSet = new HashSet<Coupan>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
 	@JoinTable(name = "Customer_Pizza_Order", joinColumns = {
 			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "customerId") })
 	Set<Customer> customerSet = new HashSet<Customer>();
@@ -57,7 +74,7 @@ public class PizzaOrder {
 
 	}
 
-	public PizzaOrder(int bookingOrderId, Locale orderDate, String transactionMode, int quantity, String size,
+	public PizzaOrder(int bookingOrderId, LocalDate orderDate, String transactionMode, int quantity, String size,
 			double totalCost, Set<Pizza> pizzaSet, Order order, Set<Coupan> coupanSet, Set<Customer> customerSet) {
 		super();
 		this.bookingOrderId = bookingOrderId;
@@ -80,11 +97,11 @@ public class PizzaOrder {
 		this.bookingOrderId = bookingOrderId;
 	}
 
-	public Locale getOrderDate() {
+	public LocalDate getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(Locale orderDate) {
+	public void setOrderDate(LocalDate orderDate) {
 		this.orderDate = orderDate;
 	}
 
@@ -161,5 +178,3 @@ public class PizzaOrder {
 	}
 
 }
-
-
