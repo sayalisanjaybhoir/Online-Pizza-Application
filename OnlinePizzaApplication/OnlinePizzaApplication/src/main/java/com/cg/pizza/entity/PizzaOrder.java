@@ -1,11 +1,13 @@
 package com.cg.pizza.entity;
 
-import java.util.Date;
+
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -25,7 +25,7 @@ public class PizzaOrder {
 	@Column(name ="booking_id")
 	private int bookingOrderId;
 	@Column(name ="order_date")
-	private Date orderDate;
+	private Locale orderDate;
 	@Column(name ="transc_mode")
 	private String transactionMode;
 	@Column(name ="pizza_quantity")
@@ -40,10 +40,10 @@ public class PizzaOrder {
 			@JoinColumn(name = "pizzaId") })
 	Set<Pizza> pizzaSet = new HashSet<Pizza>();
 
-	@OneToOne(mappedBy = "pizzaOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@Embedded
 	private Order order;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Coupan_PizzaOrder", joinColumns = {
 			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "coupanId") })
 	Set<Coupan> coupanSet = new HashSet<Coupan>();
@@ -57,7 +57,7 @@ public class PizzaOrder {
 
 	}
 
-	public PizzaOrder(int bookingOrderId, Date orderDate, String transactionMode, int quantity, String size,
+	public PizzaOrder(int bookingOrderId, Locale orderDate, String transactionMode, int quantity, String size,
 			double totalCost, Set<Pizza> pizzaSet, Order order, Set<Coupan> coupanSet, Set<Customer> customerSet) {
 		super();
 		this.bookingOrderId = bookingOrderId;
@@ -80,11 +80,11 @@ public class PizzaOrder {
 		this.bookingOrderId = bookingOrderId;
 	}
 
-	public Date getOrderDate() {
+	public Locale getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(Date orderDate) {
+	public void setOrderDate(Locale orderDate) {
 		this.orderDate = orderDate;
 	}
 
