@@ -1,0 +1,62 @@
+package com.cg.pizza.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cg.pizza.entity.Customer;
+import com.cg.pizza.respository.CustomerRepository;
+
+
+
+@Service
+public class CustomerService implements ICustomerService{
+	@Autowired
+	private CustomerRepository customerRepository;
+
+	public List<Customer> getCustomer() 
+	{
+		List<Customer> customer = customerRepository.findAll();
+		return customer;
+	}
+	public Customer getCustomer(Customer customer) 
+		{
+		Customer customerList = getCustomer(customer.getCustomerId());
+			if (customerList==null)
+			{
+				customer = customerRepository.save(customerList);
+			}
+			return customer;
+		}
+	
+	public Customer getCustomer(int id) {
+		java.util.Optional<Customer> customer = customerRepository.findById(id);
+		return (customer.isPresent()) ? customer.get() : null;
+	}
+
+	public Customer deleteCustomer(int id) {
+		Customer customer = getCustomer(id);
+		if (customer != null)
+			customerRepository.deleteById(id);
+		return customer;
+	}
+
+	public Customer updateCustomer(Customer customer) {
+		Customer customerexist = getCustomer(customer.getCustomerId());
+		if (customerexist != null) {
+			customer = customerRepository.save(customer);
+		}
+		return customer;
+	}
+
+	public Customer insertCustomer(Customer customer) {
+		Customer customerexist = getCustomer(customer.getCustomerId());
+		if (customerexist == null) {
+			customer = customerRepository.save(customer);
+		}
+		return customer;
+	}
+	
+
+}
