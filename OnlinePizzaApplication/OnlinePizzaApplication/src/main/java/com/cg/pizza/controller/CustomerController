@@ -1,0 +1,105 @@
+package com.cg.pizza.controller;
+
+import java.net.URI;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.cg.pizza.entity.Customer;
+import com.cg.pizza.service.CustomerService;
+
+
+@RestController
+@RequestMapping
+public class CustomerController {
+	@Autowired
+	private CustomerService customerService;
+	@GetMapping("/customer")
+	public ResponseEntity<List<Customer>> getCustomer() {
+
+		List<Customer> customerList = customerService.getCustomer();
+	
+		ResponseEntity<List<Customer>> response = new ResponseEntity<>(customerList, HttpStatus.NOT_FOUND);
+
+		
+		if (!customerList.isEmpty()) {
+			response = new ResponseEntity<>(customerList, HttpStatus.OK);
+		}
+
+		return response;
+	}
+	@GetMapping(value = "/{customerId}")
+	public ResponseEntity<Object> getCustomer(@PathVariable("customerId") int customerId) {
+
+		Customer customer = customerService.getCustomer(customerId);
+		//String customerId = null;
+		// Creating an error response.
+		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body("Customer " + customerId + " Not found");
+
+		
+		if (customer != null) {
+			
+			response = new ResponseEntity<>(customer, HttpStatus.OK);
+		}
+
+		return response;
+	}
+
+	@DeleteMapping(value = "/{customerId}")
+	public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") int customerId) {
+		
+		Customer customerPresent = customerService.deleteCustomer(customerId);
+		
+		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
+				.body("Message " + customerId + " deleted");
+		
+		if (customerPresent == null) {
+			response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message " + customerId + " Not found");
+		}
+		return response;
+	}
+
+	@PutMapping("/{customerId}")
+	public ResponseEntity<Object> updateCustomer(@PathVariable("customerId") int customerId,
+			@RequestBody Customer customer) {
+		customer.setCustomerId(customerId);
+		
+		Customer updateCustomer = customerService.updateCustomer(customer);
+		
+		if (updateCustomer == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer " + customerId + " Not found");
+		} else {
+		
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+					.buildAndExpand(customer.getCustomerId()).toUri();
+			return ResponseEntity.created(location).build();
+		}
+	}
+
+	@PostMapping
+	public ResponseEntity<Object> addCustomer(@RequestBody Customer customer) {
+	
+		Customer newCustomer = customerService.insertCustomer(customer);
+		
+		if (newCustomer == null)
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
+		
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(newCustomer.getCustomerId()).toUri();
+		return ResponseEntity.created(location).build();
+	}
+	
+	
+}
