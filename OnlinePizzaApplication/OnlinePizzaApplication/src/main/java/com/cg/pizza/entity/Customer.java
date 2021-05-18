@@ -1,5 +1,6 @@
 package com.cg.pizza.entity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -14,9 +15,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonIgnoreProperties({"hibernateLazyInitilizer","handler"})
 @Entity
 @Table(name = "Customer")
-public class Customer {
+public class Customer implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
 	private int customerId;
@@ -33,9 +39,11 @@ public class Customer {
 	@Column(name = "password")
 	private String password;
 
+	@JsonIgnore
 	@OneToOne(mappedBy = "customer",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private User user;
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Customer_Pizza_Order", joinColumns = { @JoinColumn(name = "customerId") }, inverseJoinColumns = {
 			@JoinColumn(name = "bookingOrderId") })
