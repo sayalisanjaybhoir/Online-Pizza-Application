@@ -21,11 +21,11 @@ import com.cg.pizza.service.CustomerService;
 
 
 @RestController
-@RequestMapping
+@RequestMapping("/customer")
 public class CustomerController {
 	@Autowired
 	private CustomerService customerService;
-	@GetMapping("/customer")
+	@GetMapping
 	public ResponseEntity<List<Customer>> getCustomer() {
 
 		List<Customer> customerList = customerService.getCustomer();
