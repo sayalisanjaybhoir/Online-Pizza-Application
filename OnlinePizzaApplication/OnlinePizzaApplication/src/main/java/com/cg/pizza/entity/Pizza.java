@@ -41,11 +41,9 @@ public class Pizza implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	
+		
 	public Pizza(int pizzaId, String pizzaType, String pizzaName, String pizzaDescription, double pizzaCost,
-			double pizzaCostAfterCoupan, Set<PizzaOrder> pizzaSet) {
+			double pizzaCostAfterCoupan, Set<PizzaOrder> pizzaOrderSet) {
 		super();
 		this.pizzaId = pizzaId;
 		this.pizzaType = pizzaType;
@@ -53,7 +51,7 @@ public class Pizza implements Serializable{
 		this.pizzaDescription = pizzaDescription;
 		this.pizzaCost = pizzaCost;
 		this.pizzaCostAfterCoupan = pizzaCostAfterCoupan;
-		this.pizzaOrderSet = pizzaSet;
+		this.pizzaOrderSet = pizzaOrderSet;
 	}
 	@JsonIgnore
 
@@ -62,6 +60,8 @@ public class Pizza implements Serializable{
 			 @JoinColumn(name = "bookingOrderId") })
 	
 	Set<PizzaOrder> pizzaOrderSet = new HashSet<PizzaOrder>();
+	
+	
 	public Set<PizzaOrder> getPizzaSet() {
 		return pizzaOrderSet;
 	}
