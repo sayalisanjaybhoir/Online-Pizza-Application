@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.cg.pizza.service.PizzaService;
 
 import com.cg.pizza.entity.Pizza;
+import com.cg.pizza.exception.InvalidMinCostException;
 import com.cg.pizza.exception.PizzaIdNotFoundException;
 
 import java.net.URI;
@@ -23,7 +24,7 @@ import java.util.List;
 @RestController
 
 
-@RequestMapping
+@RequestMapping("pizzahome")
 public class PizzaController {
 
 	@Autowired
@@ -35,9 +36,7 @@ public class PizzaController {
 		// Creating an error response.
 		ResponseEntity<List<Pizza>> response = new ResponseEntity<>(pizzaList, HttpStatus.NOT_FOUND);
 
-		// If messageList is not empty it sets the list in response else by default
-		// error will be
-		// there in response.
+		
 		if (!pizzaList.isEmpty()) {
 			response = new ResponseEntity<>(pizzaList, HttpStatus.OK);
 		}
@@ -75,16 +74,17 @@ public class PizzaController {
 	
 	@PostMapping
 	public ResponseEntity<Object> addPizza(@RequestBody Pizza pizza) {
-		// If message is inserted it returns inserted message object else null
+		
 		Pizza newPizza = pizzaService.addPizza(pizza);
-		// response is set to error if message is null.
-		if (newPizza== null)
+		
+		if (newPizza== null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
-		// response is set to inserted message id in response header section.
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(newPizza.getPizzaId()).toUri();
-		return ResponseEntity.created(location).build();
+		}
+		
+		
+		return ResponseEntity.status(HttpStatus.OK).body("pizza added");
 	}
+	
 	
 	 @PutMapping("/{pizzaId}")
      public ResponseEntity<Object> editPizza(@PathVariable("pizzaId") int pizzaId,
@@ -100,15 +100,27 @@ public class PizzaController {
  			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
  					.buildAndExpand(pizza.getPizzaId()).toUri();
  			return ResponseEntity.created(location).build();
- 		}
- 	}
+ 		}}
+	 
+ 		
+ @GetMapping("/between/{minimumcost}/{maximumcost}")
+ 
+ public List<Pizza> findBypizzaCostBetween(@PathVariable("minimumcost") double minCost,@PathVariable("maximumcost") double maxCost){
+	List<Pizza> pizList = pizzaService.viewPizzaList(minCost,maxCost);
 	
+	if (minCost<0) {
+		
+		throw new InvalidMinCostException("Pizza not found in this range ");
+	}   else
 	
-	
-	
-	}
-	
-	
-	
-	
+	return pizList;
+ }
+	 @GetMapping("/ByPizzType/{type}")       
+	 public List<Pizza> findBypizzaType(@PathVariable("type") String pizzaType){
+		 List<Pizza> pizTypeList = pizzaService.viewPizzaList(pizzaType);
+		 return pizTypeList;
+	 }
+}
+
+
 
