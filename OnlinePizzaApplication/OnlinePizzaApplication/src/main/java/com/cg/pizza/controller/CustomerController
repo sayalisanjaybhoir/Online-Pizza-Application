@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cg.pizza.entity.Customer;
+import com.cg.pizza.exception.CustomerIdNotFoundException;
 import com.cg.pizza.service.CustomerService;
 
 
@@ -39,40 +40,50 @@ public class CustomerController {
 
 		return response;
 	}
+
+
+	
 	@GetMapping(value = "/{customerId}")
-	public ResponseEntity<Object> getCustomer(@PathVariable("customerId") int customerId) {
+	public ResponseEntity<Object> getCustomer1(@PathVariable("customerId") int customerId) {
 
 		Customer customer = customerService.getCustomer(customerId);
-		//String customerId = null;
-		// Creating an error response.
-		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("Customer " + customerId + " Not found");
 
-		
-		if (customer != null) {
-			
-			response = new ResponseEntity<>(customer, HttpStatus.OK);
+		// Creating an error response.
+		// ResponseEntity<Object> response =
+		// ResponseEntity.status(HttpStatus.BAD_REQUEST)
+		// .body("Customer " + customerId + " Not found");
+
+		// If message is not null it sets the customer object in response else by default
+		// error
+		// will be there in response.
+		if (customer == null) {
+			// response = new ResponseEntity<>(customer, HttpStatus.OK);
+			throw new CustomerIdNotFoundException(customerId + " Not Found");
+
 		}
 
-		return response;
+		return new ResponseEntity<>(customer, HttpStatus.OK);
 	}
-
 	@DeleteMapping(value = "/{customerId}")
 	public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") int customerId) {
-		
+		// If message is deleted it returns deleted message object else null
 		Customer customerPresent = customerService.deleteCustomer(customerId);
-		
-		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
-				.body("Message " + customerId + " deleted");
-		
+		// Creating an success response.
+		// ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
+		// .body("Message " + messageId + " deleted");
+		// response is set to error if message is null.
 		if (customerPresent == null) {
-			response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message " + customerId + " Not found");
+			// response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer " +
+			// messageId + " Not found");
+			throw new CustomerIdNotFoundException(customerId + " Not Found");
 		}
-		return response;
+		// return response;
+		return ResponseEntity.status(HttpStatus.OK).body("Message " + customerId + " deleted");
 	}
 
+
 	@PutMapping("/{customerId}")
-	public ResponseEntity<Object> updateCustomer(@PathVariable("customerId") int customerId,
+	public ResponseEntity<Object> updateProduct(@PathVariable("customerId") int customerId,
 			@RequestBody Customer customer) {
 		customer.setCustomerId(customerId);
 		
@@ -100,6 +111,17 @@ public class CustomerController {
 				.buildAndExpand(newCustomer.getCustomerId()).toUri();
 		return ResponseEntity.created(location).build();
 	}
+//	@ExceptionHandler(value=CustomerIdNotFoundException.class) // You can Have one more exception objects
+//	public ResponseEntity<?> handleCustomerIdNotFoundException(CustomerIdNotFoundException me){
+////		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getCustomer());
+//		Map<String, Object> errorCustomer = new LinkedHashMap<>();
+//		errorCustomer.put("error", "wrong customer id");
+//		errorCustomer.put("timestamp", LocalDateTime.now());
+//		errorCustomer.put("details", me.getCustomer());
+//
+//		return new ResponseEntity<>(errorCustomer, HttpStatus.NOT_FOUND);
+//	}
 	
 	
 }
+
