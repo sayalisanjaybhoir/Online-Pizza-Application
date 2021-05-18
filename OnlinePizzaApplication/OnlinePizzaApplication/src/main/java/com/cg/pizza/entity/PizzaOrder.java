@@ -18,12 +18,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.istack.NotNull;
 @JsonIgnoreProperties({"hibernateLazyInitilizer","handler"})
 @Entity
 @Table(name = "Pizza_Order_Table")
@@ -37,13 +38,13 @@ public class PizzaOrder implements Serializable
 	private int bookingOrderId;
 	@Column(name ="order_date")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
-	//@JsonFormat(pattern = "YYYY-MM-dd HH:mm")
-	
 	private LocalDate orderDate;
 	@Column(name ="transc_mode")
 	private String transactionMode;
+	//@NotNull
 	@Column(name ="pizza_quantity")
 	private int quantity;
+	//@NotEmpty
 	@Column(name ="pizza_size")
 	private String size;
 	@Column(name ="total_pizza_cost")
