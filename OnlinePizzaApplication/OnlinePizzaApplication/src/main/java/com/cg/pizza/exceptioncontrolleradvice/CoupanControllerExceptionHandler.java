@@ -1,5 +1,3 @@
-package com.cg.pizza.exceptioncontrolleradvice;
-
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,16 +9,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.cg.pizza.exception.CoupanIdNotFoundException;
+import com.cg.pizza.exception.InvalidCoupanOperationException;
 
 @ControllerAdvice
-public class CoupanControllerExceptionHandler extends ResponseEntityExceptionHandler{
+public class CoupanControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(CoupanIdNotFoundException.class) // more exceptions
-	public ResponseEntity<?> handleMissingStaffMember(CoupanIdNotFoundException me) {
+	public ResponseEntity<?> handleCoupanId(CoupanIdNotFoundException me) {
 		Map<String, Object> errorMessage = new LinkedHashMap<>();
-		errorMessage.put("error", "wrong message id");
+		errorMessage.put("error", "Wrong coupan id");
 		errorMessage.put("timestamp", LocalDateTime.now());
 		errorMessage.put("details", me.getMessage());
 
-		return new ResponseEntity<>(errorMessage,HttpStatus.NOT_FOUND);
-}
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler(InvalidCoupanOperationException.class)
+	public ResponseEntity<?> handleInvalidCoupan(InvalidCoupanOperationException mid) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Enter proper coupan details");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", mid.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+	}
 }
