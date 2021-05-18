@@ -16,18 +16,21 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.*;
 import com.cg.pizza.service.CoupanService;
+
 import com.cg.pizza.entity.Coupan;
+import com.cg.pizza.exception.CoupanIdNotFoundException;
+import com.cg.pizza.exception.InvalidCoupanOperationException;
 
 @RestController
-@RequestMapping
+@RequestMapping("/coupan")
 public class CoupanController {
       @Autowired
       private CoupanService coupanService;
       
       @GetMapping("/coupan")
-      public ResponseEntity<List<Coupan>> viewCoupan() {
+      public ResponseEntity<List<Coupan>> viewCoupans() {
 
-      	List<Coupan> viewCoupanList = coupanService.viewCoupan();
+      	List<Coupan> viewCoupanList = coupanService.viewCoupans();
 		// Creating an error response.
       	ResponseEntity<List<Coupan>> response = new ResponseEntity<>(viewCoupanList, HttpStatus.NOT_FOUND);
 
@@ -41,51 +44,80 @@ public class CoupanController {
       	return response;
       }
       
+      
+      @GetMapping(value = "/{coupanId}")
+  	public ResponseEntity<Object> viewCoupans(@PathVariable("coupanId") int coupanId) {
+
+  		Coupan coupan = coupanService.viewCoupans(coupanId);
+  		// Creating an error response.
+  		//ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+  	//			.body("Coupan " + coupanId + " Not found");
+
+  		// If message is not null it sets the message object in response else by default
+  		// error
+  		// will be there in response.
+  		if (coupan == null) {
+  			//response = new ResponseEntity<>(coupan, HttpStatus.OK);
+  			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
+  		}
+
+  		//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan" + coupanId + "Not Found");
+  		return new ResponseEntity<>(coupan, HttpStatus.OK);
+  	}
+
+      
      @DeleteMapping("/{coupanId}")
- 	public ResponseEntity<Object> deleteCoupan(@PathVariable("coupanId") int coupanId) {
+ 	public ResponseEntity<Object> deleteCoupans(@PathVariable("coupanId") int coupanId) {
  		// If message is deleted it returns deleted message object else null
- 		Coupan coupanPresent = coupanService.deleteCoupan(coupanId);
+ 		Coupan coupanPresent = coupanService.deleteCoupans(coupanId);
  		// Creating an success response.
  		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
- 				.body("Message " + coupanId + " deleted");
+ 				.body("Coupan " + coupanId + " deleted");
  		// response is set to error if message is null.
  		if (coupanPresent == null) {
- 			response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
+ 			//response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
+ 			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
  		}
- 		return response;
+ 		return ResponseEntity.status(HttpStatus.OK).body("Coupan " + coupanId + "Deleted");
  	}
      
      @PutMapping("/{coupanId}")
-     public ResponseEntity<Object> editCoupan(@PathVariable("coupanId") int coupanId,
+     public ResponseEntity<Object> editCoupans(@PathVariable("coupanId") int coupanId,
  			@RequestBody Coupan coupan) {
  		coupan.setCoupanId(coupanId);
  		// If message is updated it returns updates message object else null
- 		Coupan editCoupan = coupanService.editCoupan(coupan);
+ 		Coupan editCoupan = coupanService.editCoupans(coupan);
  		// response is set to error if message is null.
  		if (editCoupan == null) {
- 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
+ 			//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
+ 			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
  		} else {
  			// response is set to updated message id in response header section.
  			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
  					.buildAndExpand(coupan.getCoupanId()).toUri();
  			return ResponseEntity.created(location).build();
  		}
+ 		//return new ResponseEntity<>(coupan,HttpStatus.OK);
  	}
 
      
      
      @PostMapping
-     public ResponseEntity<Object> addCoupan(@RequestBody Coupan coupan) {
+     public ResponseEntity<Object> addCoupans(@RequestBody Coupan coupan) {
  		// If message is inserted it returns inserted message object else null
- 		Coupan newCoupan = coupanService.insertCoupan(coupan);
+ 		Coupan newCoupan = coupanService.addCoupans(coupan);
  		// response is set to error if message is null.
- 		if (newCoupan == null)
- 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
+ 		if (newCoupan == null) {
+ 			//return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
  		// response is set to inserted message id in response header section.
- 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+ 			throw new InvalidCoupanOperationException(coupan + "Again enter the coupan");
+ 		}
+ 		else{URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
  				.buildAndExpand(newCoupan.getCoupanId()).toUri();
  		return ResponseEntity.created(location).build();
+ 		}
+ 	}
+ 		
  	}
       
 
-}
