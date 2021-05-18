@@ -1,5 +1,3 @@
-package com.cg.pizza.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,21 +95,25 @@ public class CoupanController {
  					.buildAndExpand(coupan.getCoupanId()).toUri();
  			return ResponseEntity.created(location).build();
  		}
- 		//return new ResponseEntity<>(coupan,HttpStatus.OK);
+ 		
  	}
 
      
      
      @PostMapping
      public ResponseEntity<Object> addCoupans(@RequestBody Coupan coupan) {
- 		// If message is inserted it returns inserted message object else null
+    	 
+    	 if (coupan.getCoupanName().isEmpty() || coupan.getCoupanName()==null) {
+    		 
+  			throw new InvalidCoupanOperationException(coupan + "Again enter the coupan");
+  		}
  		Coupan newCoupan = coupanService.addCoupans(coupan);
- 		// response is set to error if message is null.
- 		if (newCoupan == null) {
- 			//return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
- 		// response is set to inserted message id in response header section.
+ 		
+ 		if (coupan==null) {
+ 			 
  			throw new InvalidCoupanOperationException(coupan + "Again enter the coupan");
  		}
+ 		
  		else{URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
  				.buildAndExpand(newCoupan.getCoupanId()).toUri();
  		return ResponseEntity.created(location).build();
@@ -119,5 +121,3 @@ public class CoupanController {
  	}
  		
  	}
-      
-
