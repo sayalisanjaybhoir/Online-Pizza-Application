@@ -11,15 +11,17 @@ import com.cg.pizza.respository.CustomerRepository;
 
 
 @Service
+
 public class CustomerService implements ICustomerService{
 	@Autowired
 	private CustomerRepository customerRepository;
-
+	@Override
 	public List<Customer> getCustomer() 
 	{
 		List<Customer> customer = customerRepository.findAll();
 		return customer;
 	}
+	
 	public Customer getCustomer(Customer customer) 
 		{
 		Customer customerList = getCustomer(customer.getCustomerId());
@@ -34,6 +36,7 @@ public class CustomerService implements ICustomerService{
 		java.util.Optional<Customer> customer = customerRepository.findById(id);
 		return (customer.isPresent()) ? customer.get() : null;
 	}
+	@Override
 
 	public Customer deleteCustomer(int id) {
 		Customer customer = getCustomer(id);
@@ -41,7 +44,8 @@ public class CustomerService implements ICustomerService{
 			customerRepository.deleteById(id);
 		return customer;
 	}
-
+	@Override
+	
 	public Customer updateCustomer(Customer customer) {
 		Customer customerexist = getCustomer(customer.getCustomerId());
 		if (customerexist != null) {
@@ -49,7 +53,7 @@ public class CustomerService implements ICustomerService{
 		}
 		return customer;
 	}
-
+	@Override
 	public Customer insertCustomer(Customer customer) {
 		Customer customerexist = getCustomer(customer.getCustomerId());
 		if (customerexist == null) {
