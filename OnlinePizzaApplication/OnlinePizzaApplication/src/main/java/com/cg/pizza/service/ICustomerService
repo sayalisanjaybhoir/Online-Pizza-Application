@@ -6,9 +6,12 @@ import com.cg.pizza.entity.Customer;
 
 public interface ICustomerService {
 	public List<Customer> getCustomer();
-//	public Customer getCustomer(int customerId);
-//	public Customer deleteCustomer(int customerId);
-//	public Customer updateCustomer(int customerId,Customer customer);
-//	public Customer insertCustomer(Customer customer);
+	
+	public Customer getCustomer(int customerId);
+	public Customer deleteCustomer(int customerId);
+	public Customer updateCustomer(Customer customer);
+	public Customer insertCustomer(Customer customer);
+
+
 
 }
