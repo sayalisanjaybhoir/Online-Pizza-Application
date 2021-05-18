@@ -58,7 +58,20 @@ public class PizzaService implements IPizzaService {
 		}
 		return pizza;
 	}
+		
+	public List<Pizza> viewPizzaList(double minCost, double maxCost) {
 	
 	
+		List<Pizza> objlist = pizzaRepository.findBypizzaCostBetween(minCost,maxCost);
+			return objlist;
+
+	}
+	public List<Pizza> viewPizzaList(String pizzaType){
+    
+		List<Pizza> pizzabyType = pizzaRepository.findBypizzaType(pizzaType);
+
+		return pizzabyType;
+	
+	
+	}
 }
-	
