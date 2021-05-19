@@ -1,3 +1,5 @@
+package com.cg.pizza.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +88,7 @@ public class CoupanController {
  		// If message is updated it returns updates message object else null
  		Coupan editCoupan = coupanService.editCoupans(coupan);
  		// response is set to error if message is null.
- 		if (editCoupan == null) {
+ 		if (editCoupan==null) {
  			//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
  			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
  		} else {
@@ -105,7 +107,7 @@ public class CoupanController {
     	 
     	 if (coupan.getCoupanName().isEmpty() || coupan.getCoupanName()==null) {
     		 
-  			throw new InvalidCoupanOperationException(coupan + "Again enter the coupan");
+  			throw new InvalidCoupanOperationException(coupan + "Again enter the coupan Name");
   		}
  		Coupan newCoupan = coupanService.addCoupans(coupan);
  		
@@ -121,3 +123,4 @@ public class CoupanController {
  	}
  		
  	}
+      
