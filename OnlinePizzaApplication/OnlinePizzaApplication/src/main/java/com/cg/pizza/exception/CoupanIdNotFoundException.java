@@ -1,3 +1,4 @@
+package com.cg.pizza.exception;
 import java.util.Date;
 
 public class CoupanIdNotFoundException extends RuntimeException {
