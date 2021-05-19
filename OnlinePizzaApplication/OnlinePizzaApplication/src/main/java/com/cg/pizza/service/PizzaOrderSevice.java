@@ -14,11 +14,12 @@ import com.cg.pizza.repository.PizzaOrderRepository;
 
 @Service
 
-public class PizzaOrderSevice implements IPizzaOrderService
+public class PizzaOrderService implements IPizzaOrderService
 {
 
 	
-	
+	String small,medium ,large ;
+
 
 	@Autowired
 	private PizzaOrderRepository pizzaOrderRepository;
@@ -79,18 +80,31 @@ public class PizzaOrderSevice implements IPizzaOrderService
 		return pizzaOrder;
 	}
 	
-
+/*
 	@Override
-	public List<PizzaOrder> calculateTotal(String size, int quantity) {
-		PizzaOrder pizzacost = null  ;
-		String siz = pizzacost.getSize();
-		int pr = pizzacost.getQuantity();
-		
-		return null;
+	public List<PizzaOrder> calculateTotal(String size, int quantity) 
+	{
+		List<PizzaOrder> pizzaObj = null ;
+		int totalCost = 0;
+		if(size.equals("small") )
+		{
+			totalCost = 100 * quantity ;
+			
+		}
+		else if(size.equals("medium"))
+		{
+			totalCost = 150* quantity;
+		}
+		else if(size.equals("large"))
+		{
+			totalCost = 200 * quantity ;
+		}
+		System.out.println(" Total cost is "+totalCost);
+		return pizzaObj;
 	}
 
 
-
+*/
 
 	
 	
