@@ -8,5 +8,6 @@ import com.cg.pizza.entity.Coupan;
 
 @Repository
 public interface CoupanRepository extends JpaRepository<Coupan, Integer>{
+     public List<Coupan> findByCoupanName(String coupanName);
      
 }
