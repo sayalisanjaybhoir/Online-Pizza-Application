@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.cg.pizza.entity.Customer;
+import com.cg.pizza.exception.CoupanIdNotFoundException;
 import com.cg.pizza.exception.CustomerIdNotFoundException;
 import com.cg.pizza.service.CustomerService;
 
@@ -61,16 +62,24 @@ public class CustomerController {
 		Customer customer = customerService.getCustomer(customerId);
 
 		
-		if (customer == null) {
-			
-			// response = new ResponseEntity<>(customer, HttpStatus.OK);
-			throw new CustomerIdNotFoundException(customerId + " Not Found");
+		 if(customerId<0 ) {
+    		 logger.error("Coupan id cant be negative");
+    		throw new CustomerIdNotFoundException( "Coupan Id is not negative");
+    	 } 
+		//logger.info("Inside View  all Customer method");
 
-		}
-		logger.info("Inside View  all Customer method");
+		 else if (customer == null) {
+	  			//response = new ResponseEntity<>(customer, HttpStatus.OK);
+	  			logger.error(" Coupan Id Not Found Exception");
+	  			throw new CoupanIdNotFoundException("Coupan ID"  + customerId +  "Not Found");
+	  		}
 
-		return new ResponseEntity<>(customer, HttpStatus.OK);
-	}
+	  		//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer" + customerId + "Not Found");
+	  		return new ResponseEntity<>(customer, HttpStatus.OK);
+	  	}
+
+	
+	
 	@DeleteMapping(value = "/{customerId}")
 	public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") int customerId) {
 		
@@ -120,5 +129,3 @@ public class CustomerController {
 	
 	
 }
-
-
