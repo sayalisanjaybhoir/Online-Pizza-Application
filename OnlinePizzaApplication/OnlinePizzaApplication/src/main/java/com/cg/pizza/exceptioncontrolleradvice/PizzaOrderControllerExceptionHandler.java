@@ -10,19 +10,35 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cg.pizza.exception.InvalidMinCostException;
+import com.cg.pizza.exception.InvalidPizzaOperationException;
+import com.cg.pizza.exception.InvalidPizzaTypeException;
 import com.cg.pizza.exception.OrderIdNotFoundException;
+import com.cg.pizza.exception.PizzaIdNotFoundException;
 
 @ControllerAdvice
-public class PizzaOrderControllerExceptionHandler extends ResponseEntityExceptionHandler
-{	 
-		@ExceptionHandler(OrderIdNotFoundException.class) // more exceptions
-		public ResponseEntity<?> orderIdNotFound(OrderIdNotFoundException id) {
-			Map<String, Object> errorMessage = new LinkedHashMap<>();
-			errorMessage.put("error", "Invalid pizza order id");
-			errorMessage.put("timestamp", LocalDateTime.now());
-			errorMessage.put("details", id.getMessage());
+public class PizzaControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-			return new ResponseEntity<>(errorMessage,HttpStatus.NOT_FOUND);
-	}
+	@ExceptionHandler(PizzaIdNotFoundException.class) // more exceptions
+	public ResponseEntity<?> handleMissingStaffMember(PizzaIdNotFoundException me) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Pizza id entered is wrong");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", me.getMessage()); // check this line
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(InvalidMinCostException.class) // more exceptions
+	public ResponseEntity<?> handleMissingStaffMember(InvalidMinCostException me) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Pizza not found in this range");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", me.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+
+		// More methods for all controllers
+	}
+
+	
