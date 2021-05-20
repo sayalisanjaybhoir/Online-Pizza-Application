@@ -1,13 +1,14 @@
 package com.cg.pizza.service;
 
-import com.cg.pizza.entity.Coupan;
-import com.cg.pizza.repository.CoupanRepository;
-
-
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.cg.pizza.entity.Coupan;
+import com.cg.pizza.entity.Pizza;
+import com.cg.pizza.repository.CoupanRepository;
 
 @Service
 public class CoupanService implements ICoupanService{
@@ -48,4 +49,13 @@ public class CoupanService implements ICoupanService{
 		}
 		return coupan;
 	}
+	
+	@Override
+	public List<Coupan> viewCoupanList(String coupanName){
+	    
+		List<Coupan> bycoupanName = coupanRepository.findByCoupanName(coupanName);
+
+		return bycoupanName;
+
+}
 }
