@@ -13,4 +13,5 @@ public interface ICoupanService {
 	public Coupan deleteCoupans(int coupanId)throws CoupanIdNotFoundException;
 
 	public List<Coupan> viewCoupans();
+	public List<Coupan> viewCoupanList(String coupanName);
 }
