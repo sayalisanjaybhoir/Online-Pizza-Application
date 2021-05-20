@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cg.pizza.exception.CoupanNameNotFoundException;
 import com.cg.pizza.exception.CoupanIdNotFoundException;
 import com.cg.pizza.exception.InvalidCoupanOperationException;
 
@@ -33,4 +34,15 @@ public class CoupanControllerExceptionHandler extends ResponseEntityExceptionHan
 
 		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(CoupanNameNotFoundException.class)
+	public ResponseEntity<?> handleInvalidCoupanName(CoupanNameNotFoundException mi) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Coupan Name not found");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", mi.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+	}
+	
 }
