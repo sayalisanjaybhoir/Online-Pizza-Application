@@ -42,3 +42,26 @@ public class PizzaControllerExceptionHandler extends ResponseEntityExceptionHand
 	}
 
 	
+
+	@ExceptionHandler(InvalidPizzaOperationException.class) // more exceptions
+	public ResponseEntity<?> WrongInputDetails(InvalidPizzaOperationException me) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Empty or wrong details given");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", me.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+
+	}
+	@ExceptionHandler(InvalidPizzaTypeException.class) // more exceptions
+	public ResponseEntity<?> WrongInputDetails(InvalidPizzaTypeException me) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Enter correct pizza type");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", me.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+
+	}
+	
+}
