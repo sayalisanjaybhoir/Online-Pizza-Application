@@ -3,6 +3,7 @@ package com.cg.pizza.controller;
 import java.net.URI;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +17,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.cg.pizza.entity.Customer;
 import com.cg.pizza.exception.CustomerIdNotFoundException;
 import com.cg.pizza.service.CustomerService;
 
 
+
+
+
+
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
+	
 	@Autowired
 	private CustomerService customerService;
+	Logger logger = LoggerFactory.getLogger(CustomerController.class);
+	
+	
 	@GetMapping
 	public ResponseEntity<List<Customer>> getCustomer() {
 
@@ -44,41 +55,35 @@ public class CustomerController {
 
 	
 	@GetMapping(value = "/{customerId}")
-	public ResponseEntity<Object> getCustomer1(@PathVariable("customerId") int customerId) {
+	public ResponseEntity<Object> getCustomer(@PathVariable("customerId") int customerId) {
+		logger.debug("In getCustomer Method");
 
 		Customer customer = customerService.getCustomer(customerId);
 
-		// Creating an error response.
-		// ResponseEntity<Object> response =
-		// ResponseEntity.status(HttpStatus.BAD_REQUEST)
-		// .body("Customer " + customerId + " Not found");
-
-		// If message is not null it sets the customer object in response else by default
-		// error
-		// will be there in response.
+		
 		if (customer == null) {
+			
 			// response = new ResponseEntity<>(customer, HttpStatus.OK);
 			throw new CustomerIdNotFoundException(customerId + " Not Found");
 
 		}
+		logger.info("Inside View  all Customer method");
 
 		return new ResponseEntity<>(customer, HttpStatus.OK);
 	}
 	@DeleteMapping(value = "/{customerId}")
 	public ResponseEntity<Object> deleteCustomer(@PathVariable("customerId") int customerId) {
-		// If message is deleted it returns deleted message object else null
+		
 		Customer customerPresent = customerService.deleteCustomer(customerId);
-		// Creating an success response.
-		// ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
-		// .body("Message " + messageId + " deleted");
-		// response is set to error if message is null.
+		
+		
+		
 		if (customerPresent == null) {
-			// response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Customer " +
-			// messageId + " Not found");
+			
 			throw new CustomerIdNotFoundException(customerId + " Not Found");
 		}
-		// return response;
-		return ResponseEntity.status(HttpStatus.OK).body("Message " + customerId + " deleted");
+		
+		return ResponseEntity.status(HttpStatus.OK).body("Customer " + customerId + " deleted");
 	}
 
 
@@ -111,17 +116,9 @@ public class CustomerController {
 				.buildAndExpand(newCustomer.getCustomerId()).toUri();
 		return ResponseEntity.created(location).build();
 	}
-//	@ExceptionHandler(value=CustomerIdNotFoundException.class) // You can Have one more exception objects
-//	public ResponseEntity<?> handleCustomerIdNotFoundException(CustomerIdNotFoundException me){
-////		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getCustomer());
-//		Map<String, Object> errorCustomer = new LinkedHashMap<>();
-//		errorCustomer.put("error", "wrong customer id");
-//		errorCustomer.put("timestamp", LocalDateTime.now());
-//		errorCustomer.put("details", me.getCustomer());
-//
-//		return new ResponseEntity<>(errorCustomer, HttpStatus.NOT_FOUND);
-//	}
+
 	
 	
 }
+
 
