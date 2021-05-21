@@ -1,10 +1,8 @@
 package com.cg.pizza.entity;
 
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
-
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,46 +10,44 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.sun.istack.NotNull;
-@JsonIgnoreProperties({"hibernateLazyInitilizer","handler"})
+
+@JsonIgnoreProperties({ "hibernateLazyInitilizer", "handler" })
 @Entity
 @Table(name = "Pizza_Order_Table")
 
-public class PizzaOrder implements Serializable
-{
+public class PizzaOrder implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
-	@Column(name ="booking_id")
+	@Column(name = "booking_id")
 	private int bookingOrderId;
-	@Column(name ="order_date")
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
+	@Column(name = "order_date")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate orderDate;
-	@Column(name ="transc_mode")
+	@Column(name = "transc_mode")
 	private String transactionMode;
-	//@NotNull
-	@Column(name ="pizza_quantity")
+	@Column(name = "pizza_quantity")
 	private int quantity;
-	//@NotEmpty
-	@Column(name ="pizza_size")
+	@NotBlank(message = "Enter the value in string format from small , medium,large")
+	@Column(name = "pizza_size")
 	private String size;
-	@Column(name ="total_pizza_cost")
+
+	@Column(name = "total_pizza_cost")
+
 	private double totalCost;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 	@JoinTable(name = "Pizza_Order", joinColumns = { @JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = {
 			@JoinColumn(name = "pizzaId") })
 	Set<Pizza> pizzaSet = new HashSet<Pizza>();
@@ -60,19 +56,31 @@ public class PizzaOrder implements Serializable
 	private Order order;
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 	@JoinTable(name = "Coupan_PizzaOrder", joinColumns = {
 			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "coupanId") })
 	Set<Coupan> coupanSet = new HashSet<Coupan>();
 
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 	@JoinTable(name = "Customer_Pizza_Order", joinColumns = {
 			@JoinColumn(name = "bookingOrderId") }, inverseJoinColumns = { @JoinColumn(name = "customerId") })
 	Set<Customer> customerSet = new HashSet<Customer>();
 
 	public PizzaOrder() {
 
+	}
+
+	public PizzaOrder(int bookingOrderId, LocalDate orderDate, String transactionMode, int quantity,
+			@NotBlank(message = "Enter the value in string format from small , medium,large") String size,
+			double totalCost) {
+		super();
+		this.bookingOrderId = bookingOrderId;
+		this.orderDate = orderDate;
+		this.transactionMode = transactionMode;
+		this.quantity = quantity;
+		this.size = size;
+		this.totalCost = totalCost;
 	}
 
 	public PizzaOrder(int bookingOrderId, LocalDate orderDate, String transactionMode, int quantity, String size,
@@ -179,3 +187,4 @@ public class PizzaOrder implements Serializable
 	}
 
 }
+
