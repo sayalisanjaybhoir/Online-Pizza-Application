@@ -93,13 +93,18 @@ public class CoupanController {
   		logger.info("Inside view pizza by type method");
 
   		List<Coupan> bycoupanName = coupanService.viewCoupanList(coupanName);
-  		
-      if (bycoupanName.isEmpty() || bycoupanName==null) {
+  	
+  		if(coupanService.isInteger(coupanName)) {
+  			throw new CoupanIdNotFoundException("The coupan name cannot be an integer");
+  		}
+  		else if (bycoupanName.isEmpty() || bycoupanName==null) {
        throw new CoupanNameNotFoundException("Enter proper coupan name");
 }
 //      else if(!System.bycoupanName.RegularExpressions.Regex.IsMatch("^[0-9]", bycoupanName) {
 //    	  throw new CoupanNameNotFoundException("Coupan Name cannot be an integer")
 //      }
+      
+      
       return new ResponseEntity<>(bycoupanName, HttpStatus.OK); 
       }
       
@@ -112,10 +117,6 @@ public class CoupanController {
     		 logger.error("Coupan id cant be negative");
     		throw new CoupanIdNotFoundException("Coupan Id is not negative");
     	 }
- 		// Creating an success response.
-// 		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
-// 				.body("Coupan " + coupanId + " deleted");
- 		// response is set to error if coupan is null.
   		 else if (coupanPresent == null) {
  			//response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
  			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
@@ -133,8 +134,10 @@ public class CoupanController {
  		coupan.setCoupanId(coupanId);
  		// If coupan is updated it returns updates coupan object else null
  		Coupan editCoupan = coupanService.editCoupans(coupan);
+ 		logger.error("View coupan value", editCoupan);
  		// response is set to error if coupan is null.
  		if (editCoupan==null) {
+ 			
  			//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Coupan " + coupanId + " Not found");
  			throw new CoupanIdNotFoundException("Coupan ID" + coupanId + "Not Found");
  		} else {
@@ -176,8 +179,5 @@ public class CoupanController {
  		
  	}
       
-
-
-
 
 
