@@ -1,67 +1,22 @@
-package com.cg.pizza.exceptioncontrolleradvice;
+package com.cg.pizza.exception;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Date;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+public class InvalidSizeException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
+	private Date timestamp;
+	private String message;
 
-import com.cg.pizza.exception.InvalidMinCostException;
-import com.cg.pizza.exception.InvalidPizzaOperationException;
-import com.cg.pizza.exception.InvalidPizzaTypeException;
-import com.cg.pizza.exception.OrderIdNotFoundException;
-import com.cg.pizza.exception.PizzaIdNotFoundException;
-
-@ControllerAdvice
-public class PizzaControllerExceptionHandler extends ResponseEntityExceptionHandler {
-
-	@ExceptionHandler(PizzaIdNotFoundException.class) // more exceptions
-	public ResponseEntity<?> handleMissingStaffMember(PizzaIdNotFoundException me) {
-		Map<String, Object> errorMessage = new LinkedHashMap<>();
-		errorMessage.put("error", "Pizza id entered is wrong");
-		errorMessage.put("timestamp", LocalDateTime.now());
-		errorMessage.put("details", me.getMessage()); // check this line
-
-		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-	}
-
-	@ExceptionHandler(InvalidMinCostException.class) // more exceptions
-	public ResponseEntity<?> handleMissingStaffMember(InvalidMinCostException me) {
-		Map<String, Object> errorMessage = new LinkedHashMap<>();
-		errorMessage.put("error", "Pizza not found in this range");
-		errorMessage.put("timestamp", LocalDateTime.now());
-		errorMessage.put("details", me.getMessage());
-
-		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-
-		// More methods for all controllers
-	}
-
-	
-
-	@ExceptionHandler(InvalidPizzaOperationException.class) // more exceptions
-	public ResponseEntity<?> WrongInputDetails(InvalidPizzaOperationException me) {
-		Map<String, Object> errorMessage = new LinkedHashMap<>();
-		errorMessage.put("error", "Empty or wrong details given");
-		errorMessage.put("timestamp", LocalDateTime.now());
-		errorMessage.put("details", me.getMessage());
-
-		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+	public InvalidSizeException() {
 
 	}
-	@ExceptionHandler(InvalidPizzaTypeException.class) // more exceptions
-	public ResponseEntity<?> WrongInputDetails(InvalidPizzaTypeException me) {
-		Map<String, Object> errorMessage = new LinkedHashMap<>();
-		errorMessage.put("error", "Enter correct pizza type");
-		errorMessage.put("timestamp", LocalDateTime.now());
-		errorMessage.put("details", me.getMessage());
 
-		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
-
+	public InvalidSizeException(String message) {
+		super(message);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "SizeInvalidException [timestamp=" + timestamp + ", message=" + message + "]";
+	}
 }
