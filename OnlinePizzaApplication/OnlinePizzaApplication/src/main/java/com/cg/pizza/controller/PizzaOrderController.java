@@ -3,13 +3,16 @@ package com.cg.pizza.controller;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-
+import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,145 +21,133 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.cg.pizza.entity.PizzaOrder;
+import com.cg.pizza.exception.InvalidSizeException;
 import com.cg.pizza.exception.OrderIdNotFoundException;
-import com.cg.pizza.service.PizzaOrderSevice;
-
+import com.cg.pizza.service.PizzaOrderService;
 
 @RestController
-@RequestMapping("/pizza")
+@RequestMapping("/pizzaorder")
 public class PizzaOrderController {
-
+	Logger log = LoggerFactory.getLogger(PizzaOrderController.class);
 	@Autowired
-	private PizzaOrderSevice pizzaorderservice;
+	private PizzaOrderService pizzaorderservice;
 
-	
 	// 1.Get All pizzaList
-	
+
 	@GetMapping
 	public ResponseEntity<List<PizzaOrder>> getPizzaOrder() {
-
+		log.debug("In getPizzaOrder Method");
 		List<PizzaOrder> pizzaOrderList = pizzaorderservice.viewOrderList();
-		// Creating an error response.
 		ResponseEntity<List<PizzaOrder>> response = new ResponseEntity<>(pizzaOrderList, HttpStatus.NOT_FOUND);
-
-		
 		if (!pizzaOrderList.isEmpty()) {
+			log.info("Inside View  all Pizza method");
 			response = new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
 		}
+		return response;
+	}
 
-		return response;
-	}
-	
-	
-	/*
-	@GetMapping(value = "/{pizzaId}")
-	public ResponseEntity<Object> getPizzaById (@PathVariable("pizzaId") int pizzaId)
-	{
-		PizzaOrder pizzaOrderList = pizzaorderservice.viewOrderList(pizzaId);
-		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("Message " + pizzaId + " Not found");
-		if (pizzaOrderList != null)
-		{
-			response= new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
-		}
-		return response;
-	
-	}
-	*/
-	
-	//2.Get Pizza By Booking id
-	
+	// 2.Get Pizza By Booking id
+
 	@GetMapping(value = "/{pizzaBookOrderId}")
-	public ResponseEntity<Object> getPizzaByOrderId (@PathVariable("pizzaBookOrderId") int pizzaOrderId)
-	{
+	public ResponseEntity<Object> getPizzaByOrderId(@Valid @PathVariable("pizzaBookOrderId") int pizzaOrderId) {
 		PizzaOrder pizzaOrderList = pizzaorderservice.viewPizzaOrder(pizzaOrderId);
-		//ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-		//		.body("Pizza with " + pizzaOrderId + " Not found");
-		if (pizzaOrderList == null)
-		{
-			//response= new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
-			throw new OrderIdNotFoundException(pizzaOrderId+" not found");
+		if (pizzaOrderList == null) {
+			log.error("Pizza Order ID Not Found Exception");
+			throw new OrderIdNotFoundException(pizzaOrderId + " not found");
 		}
-		return new ResponseEntity<>(pizzaOrderList,HttpStatus.OK);
-	
+		log.info("Inside View  all Pizza method");
+		return new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
+
 	}
-	
-	// get Pizza By Date
+
+	// 3 get Pizza By Date
 	@GetMapping(value = "/date/{pizzaOrderDate}")
-	public ResponseEntity<Object> getPizzaByDate (@PathVariable("pizzaOrderDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate orderDate)
-	{
+	public ResponseEntity<Object> getPizzaByDate(
+			@PathVariable("pizzaOrderDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate orderDate) {
 		List<PizzaOrder> pizzaOrderList = pizzaorderservice.viewOrderByDate(orderDate);
-		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("Pizaa with " + orderDate + " Not found");
-		if (pizzaOrderList != null)
-		{
-			response= new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
-		}
-		return response;
-	
+		if (pizzaOrderList.isEmpty()) {
+			log.error("OrderDate not found");
+			throw new OrderIdNotFoundException("OrderDate " + orderDate + " Not Found");
+		} else
+			log.info("Found order date");
+		return new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
+
 	}
-	
-	
-	//3 Delete Pizza By Booking ID
-	
-	@DeleteMapping(value= "/{bookId}")
-	public ResponseEntity<Object> deletePizzaOrder(@PathVariable("bookId") int bookingId)
-	{
+
+	// 4 Delete Pizza By Booking ID
+
+	@DeleteMapping(value = "/{bookId}")
+	public ResponseEntity<Object> deletePizzaOrder(@PathVariable("bookId") int bookingId) {
+
 		PizzaOrder pizzaOrderList = pizzaorderservice.cancelPizzaOrder(bookingId);
-		ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body("Pizza " + bookingId + " Found");
-		if (pizzaOrderList == null)
-		{
-			//response= new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
-			throw new OrderIdNotFoundException(bookingId +" not found");
+		if (pizzaOrderList == null) {
+			// response= new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
+			log.error("Pizza Order ID Not Found Exception");
+			throw new OrderIdNotFoundException(bookingId + " not found");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body("Pizza with pizza id  " + bookingId + " deleted");
-	
+
 	}
-	
+
+	// 5
 	@PutMapping("/{bookId}")
-	public ResponseEntity<Object> updatePizzaOrder(@PathVariable("bookId") int bookingId,@RequestBody PizzaOrder pizzaOrder) 
-	{
-		
-		pizzaOrder.setBookingOrderId(bookingId);
-		// If message is updated it returns updates message object else null
+	public ResponseEntity<Object> updatePizzaOrder(@PathVariable("bookId") int bookingId,
+			@RequestBody PizzaOrder pizzaOrder) {
+
 		PizzaOrder updatePizzaOrder = pizzaorderservice.updatePizzaOrder(pizzaOrder);
-		// response is set to error if message is null.
-		if (updatePizzaOrder == null) 
-		{
-			//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pizza with  " + bookingId + " Not found");
-			throw new OrderIdNotFoundException(bookingId +" not found");		
-			}
-		else {
-			// response is set to updated message id in response header section.
-//			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-//					.buildAndExpand(updatePizzaOrder.getBookingOrderId()).toUri();
-//			return ResponseEntity.created(location).build();
-			return ResponseEntity.status(HttpStatus.OK).body("Pizza with pizza id  " + bookingId + " added");
-			
+
+		if (updatePizzaOrder.getTotalCost() < 0 || updatePizzaOrder.getQuantity() < 0
+				|| updatePizzaOrder.getSize().isEmpty()) {
+			log.info("Object is null");
+			throw new OrderIdNotFoundException(bookingId + " not found");
+		} else {
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+					.buildAndExpand(pizzaOrder.getBookingOrderId()).toUri();
+			return ResponseEntity.created(location).build();
+
 		}
 	}
-	
-	
-	
-	// 4 Add the pizza order
-	
-	@PostMapping
-	public ResponseEntity<Object> addPizzaOrder(@RequestBody PizzaOrder pizzaOrder) 
-	{
-		//System.out.println("Enterd in post method");
-		PizzaOrder pizzaOrderList = pizzaorderservice.bookPizzaOrder(pizzaOrder);
-		//System.out.println(pizzaOrderList);
-		if (pizzaOrderList == null)
 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Inernal server error");
-		// response is set to inserted message id in response header section.
-		//System.out.println(pizzaOrderList);
+	// 6 Add the pizza order
+
+	@PostMapping
+	public ResponseEntity<Object> addPizzaOrder(@RequestBody PizzaOrder pizzaOrder) {
+
+		if (pizzaOrder.getOrderDate().isAfter(LocalDate.now()))
+			throw new OrderIdNotFoundException("Enter the correct date");
+		else if (pizzaOrder.getBookingOrderId() < 0)
+			throw new OrderIdNotFoundException("Enter the proper booking id");
+		else if (pizzaOrder.getSize().isEmpty())
+			throw new OrderIdNotFoundException("Enter the correct size in string format");
+		else if (pizzaOrder.getQuantity() < 0)
+			throw new OrderIdNotFoundException("Enter the correct quantity");
+
+		else
+			pizzaorderservice.bookPizzaOrder(pizzaOrder);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand((pizzaOrderList).getBookingOrderId()).toUri();
+				.buildAndExpand(pizzaOrder.getBookingOrderId()).toUri();
 		return ResponseEntity.created(location).build();
 	}
 
-	
+	// 7 Calculate the total cost
+	@PatchMapping("/cost/{pizzaId}/{Pizzasize}/{Pizzaquantity}")
+	public ResponseEntity<Object> getPizzaCost(@PathVariable("pizzaId") int pizzaId,
+			@PathVariable("Pizzasize") String size, @PathVariable("Pizzaquantity") int quantity) {
+
+		if (!(size.equals("small") || size.equals("medium") || size.equals("large"))) {
+			throw new InvalidSizeException(size + " is Invalid .Please enter correct data");
+		}
+		if (quantity < 0) {
+			log.error("Quantity should be greater than zero");
+		}
+		List<PizzaOrder> pizzaOrderList = pizzaorderservice.calculateTotal(pizzaId, size, quantity);
+
+		if (pizzaOrderList.isEmpty()) {
+			log.info("No Pizza Found");
+			throw new OrderIdNotFoundException(pizzaId + " not found");
+		}
+		return new ResponseEntity<>(pizzaOrderList, HttpStatus.OK);
+	}
 
 }
+
