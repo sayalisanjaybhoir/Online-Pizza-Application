@@ -1,22 +1,38 @@
-package com.cg.pizza.exception;
+package com.cg.pizza.exceptioncontrolleradvice;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class InvalidSizeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
-	private Date timestamp;
-	private String message;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-	public InvalidSizeException() {
+import com.cg.pizza.exception.InvalidSizeException;
+import com.cg.pizza.exception.OrderIdNotFoundException;
 
+@ControllerAdvice
+public class PizzaOrderControllerExceptionHandler extends ResponseEntityExceptionHandler {
+	@ExceptionHandler(OrderIdNotFoundException.class) // more exceptions
+	public ResponseEntity<?> orderIdNotFound(OrderIdNotFoundException id) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Invalid pizza order id");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", id.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
 	}
 
-	public InvalidSizeException(String message) {
-		super(message);
+	@ExceptionHandler(InvalidSizeException.class) // more exceptions
+	public ResponseEntity<?> sizeNotFound(InvalidSizeException size) {
+		Map<String, Object> errorMessage = new LinkedHashMap<>();
+		errorMessage.put("error", "Invalid Pizza Size");
+		errorMessage.put("timestamp", LocalDateTime.now());
+		errorMessage.put("details", size.getMessage());
+
+		return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
 	}
 
-	@Override
-	public String toString() {
-		return "SizeInvalidException [timestamp=" + timestamp + ", message=" + message + "]";
-	}
 }
