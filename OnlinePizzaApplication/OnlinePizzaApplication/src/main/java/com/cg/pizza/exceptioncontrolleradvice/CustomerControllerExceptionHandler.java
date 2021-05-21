@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.cg.pizza.exception.CustomerIdNotFoundException;
 
-public class ApplicationControllerExceptionHandler {
+ 
 	@ControllerAdvice
 	public class CustomerControllerExceptionHandler extends ResponseEntityExceptionHandler{
 		@ExceptionHandler(CustomerIdNotFoundException.class) // more exceptions
@@ -26,4 +26,4 @@ public class ApplicationControllerExceptionHandler {
 	}
 	}
 
-}
+
