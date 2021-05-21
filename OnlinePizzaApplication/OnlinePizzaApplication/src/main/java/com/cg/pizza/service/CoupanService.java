@@ -22,8 +22,14 @@ public class CoupanService implements ICoupanService{
 	}
 	
 	public Coupan viewCoupans(int id) {
-		Optional<Coupan> coupan = coupanRepository.findById(id);
-		return (coupan.isPresent()) ? coupan.get() : null;
+		Coupan coupan=null;
+		Optional<Coupan> optional = coupanRepository.findById(id);
+		//return (coupan.isPresent()) ? coupan.get() : cp;
+		if(optional.isPresent()) {
+			coupan=optional.get();
+			
+		}
+		return coupan;
 	}
 	
 	public Coupan deleteCoupans(int id) {
@@ -58,4 +64,17 @@ public class CoupanService implements ICoupanService{
 		return bycoupanName;
 
 }
+	
+	public boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		}
+		catch(NumberFormatException em ){
+			return false;
+		}
+		catch(NullPointerException nm) {
+			return false;
+		}
+		return true;
+	}
 }
